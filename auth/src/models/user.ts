@@ -9,13 +9,13 @@ interface UserAttrs {
 }
 
 //An interface that describes the properties
-// that the user model have
+// that the user model have (represent the entire document of data)
 interface UserModel extends mongoose.Model<UserDoc> {
   build(attrs: UserAttrs): UserDoc;
 }
 
 // An interface that describes the properties
-//that a user Document has
+//that a user Document has (the saved record had)
 interface UserDoc extends mongoose.Document {
   email: string;
   password: string;
