@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: client
-          image: willycedric/ms-client
+          image: willycedric/ms-client:latest
 
 ---
 apiVersion: v1
