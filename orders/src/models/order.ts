@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 import { OrderStatus } from '@invasivemushrooms/ticketing-common';
 import { TicketDoc } from './ticket';
 export { OrderStatus };
@@ -36,7 +37,7 @@ const orderSchema = new mongoose.Schema(
     },
     ticket: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'ticket',
+      ref: 'Ticket',
     },
   },
   {
@@ -49,6 +50,8 @@ const orderSchema = new mongoose.Schema(
   }
 );
 
+//orderSchema.set('versionKey', 'version');
+//orderSchema.plugin(updateIfCurrentPlugin);
 orderSchema.statics.build = (attrs: OrderAttrs) => {
   return new Order(attrs);
 };

@@ -1,4 +1,6 @@
 import express, { Request, Response } from 'express';
+import { OrderCreatedPublisher } from '../events/publishers/order-created-publisher';
+import { natsWrapper } from '../nats-wrapper';
 import mongoose from 'mongoose';
 import {
   NotFoundError,
@@ -13,8 +15,7 @@ import { Ticket } from '../models/ticket';
 import { Order } from '../models/order';
 
 const router = express.Router();
-const EXPIRATION_WINDOW_SECONDS = process.env.EXPIRATION_WINDOW_SECONDS!;
-
+const EXPIRATION_WINDOW_SECONDS = 15 * 60; //process.env.EXPIRATION_WINDOW_SECONDS;
 router.post(
   '/api/orders',
   requireAuth,
@@ -33,6 +34,7 @@ router.post(
     if (!ticket) {
       throw new NotFoundError();
     }
+
     //Make sure that the ticket is not already reserved
     const isReserved = await ticket.isReserved();
     if (isReserved) {
@@ -40,10 +42,7 @@ router.post(
     }
     //Calculate an expiration date for this order
     const expiration = new Date();
-    expiration.setSeconds(
-      expiration.getSeconds() + parseInt(EXPIRATION_WINDOW_SECONDS)
-    );
-
+    expiration.setSeconds(expiration.getSeconds() + EXPIRATION_WINDOW_SECONDS);
     // Build the order and save it to the database
     const order = Order.build({
       userId: req.currentUser!.id,
@@ -53,8 +52,18 @@ router.post(
     });
     await order.save();
     // Publish an event saying that an order was created and
-
-    res.send({});
+    new OrderCreatedPublisher(natsWrapper.client).publish({
+      id: order.id,
+      status: order.status,
+      userId: order.userId,
+      version: ticket.version,
+      expiresAt: order.expiresAt.toISOString(), //to get a utc timestamp
+      ticket: {
+        id: ticket.id,
+        price: ticket.price,
+      },
+    });
+    res.status(201).send(order);
   }
 );
 
