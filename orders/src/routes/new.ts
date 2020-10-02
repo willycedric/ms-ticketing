@@ -56,7 +56,7 @@ router.post(
       id: order.id,
       status: order.status,
       userId: order.userId,
-      version: ticket.version,
+      version: order.version,
       expiresAt: order.expiresAt.toISOString(), //to get a utc timestamp
       ticket: {
         id: ticket.id,
