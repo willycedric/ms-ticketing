@@ -9,7 +9,7 @@ const client = ({ req }) => {
       headers: req.headers,
     });
   } else {
-    //we must be on the server
+    //we must be on the browser
     return axios.create({
       baseURL: '/',
     });

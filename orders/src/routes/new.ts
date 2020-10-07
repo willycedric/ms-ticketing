@@ -15,7 +15,7 @@ import { Ticket } from '../models/ticket';
 import { Order } from '../models/order';
 
 const router = express.Router();
-const EXPIRATION_WINDOW_SECONDS = 15 * 60; //process.env.EXPIRATION_WINDOW_SECONDS;
+const EXPIRATION_WINDOW_SECONDS = 2 * 60; //process.env.EXPIRATION_WINDOW_SECONDS;
 router.post(
   '/api/orders',
   requireAuth,
