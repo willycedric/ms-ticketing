@@ -1,9 +1,10 @@
-name: tests-auth
+name: tests-payments
 
 on:
   pull_request:
     paths:
-      - "orders/**"
+      - 'payments/**'
+
 jobs:
   build:
     runs-on: ubuntu-latest
